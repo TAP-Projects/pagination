@@ -3,12 +3,23 @@
 const students = document.querySelectorAll('.student-item');
 // Number of students to be shown on each page
 const studentsPerPage = 10;
+// Page is used twice, so I'm moving it up here
+const thePage = document.querySelector('.page');
 
 // showPage takes a list of students and a page number and shows a list of no more than 10 students on a given page
 function showPage(list, page) {
+
+	// Show a message if there are no students in the list
+	if(list.length <= 0){
+		const oops = document.createElement('p');
+		oops.textContent = "No results found.";
+		thePage.appendChild(oops);
+		return;
+	}
+
 	// Hide all the students except for the ten you want displayed on a given page
 	list.forEach(item => item.style.display = 'none');
-
+	
 	// The start and end index of the list items to be shown on a given page
 	// On page 1, the startIndex will be 0, on page 2, 10, etc.
 	const startIndex = (page * studentsPerPage) - studentsPerPage;
@@ -26,8 +37,9 @@ function showPage(list, page) {
 
 // appendPageLinks generates, appends, and adds functionality to the pagination buttons.
 function appendPageLinks(list) {
+	// If there are no students, then return
+	if(list.length <= 0) return;
 
-	const page = document.querySelector('.page');
 	const fragment = new DocumentFragment();
 
 	// Create the needed number of page links and append them to a fragment
@@ -52,7 +64,7 @@ function appendPageLinks(list) {
 	list.appendChild(fragment);
 
 	// The only place I touch the DOM
-	page.appendChild(pagination);
+	thePage.appendChild(pagination);
 
 	pagination.addEventListener('click', (e) => showPage(students, parseInt(e.target.textContent)) );
 	
@@ -63,3 +75,11 @@ appendPageLinks(students);
 
 // Show the first page of students
 showPage(students, 1);
+
+// This goes in the header, right after the h2
+// <!-- student search HTML to add dynamically -->
+// <div class="student-search">
+// <input placeholder="Search for students...">
+// <button>Search</button>
+// </div>
+// <!-- end search -->
