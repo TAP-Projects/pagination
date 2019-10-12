@@ -28,7 +28,7 @@ function showPage(list, page) {
 
 	// Display any list item with an index that is greater than or equal to the start index and less than the end index
 	for (let i = startIndex; i < endIndex; i++) {
-		// Don't attempt to set the style of items that don't exist!
+		// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
 		if (list[i]) {
 			list[i].style.display = 'block';
 		}
@@ -76,7 +76,9 @@ function appendPageLinks(list) {
 	
 }
 
-function appendSearch(){
+function appendSearch(list){
+
+	// Generate and append search form
 	const search = document.createElement('form');
 	search.setAttribute('class', 'student-search');
 	const input = document.createElement('input');
@@ -85,15 +87,40 @@ function appendSearch(){
 	button.textContent = 'Search';
 	search.appendChild(input);
 	search.appendChild(button);
-	
 	theHeader.appendChild(search);
 
+	// Store the results
+	const results = [];
+
+	// searchStudents searches through the list of students and returns an array of matches
 	function searchStudents(e){
+		// prevent page reload on submit
 		e.preventDefault();
-		console.log(input.value);
+		// Store the query string as a regexp
+		const query = new RegExp(e.target.value.trim().toLowerCase());
+		// Loop through the student collection and store the students who pass the test
+		for(let i = 0; i < students.length; i++){
+			// Store the student name as a regexp
+			const name = new RegExp(students[i].firstElementChild.children[1].textContent.trim().toLowerCase());
+			// Test the query against the name, return true if it's found
+			if(query.test(name)){	
+				// Store the student node
+				results.push(students[i]);
+			} 
+		}
+		return results;
+
+		// return Array.from(students).filter( student => {
+		// 	// Store the student's name as a regexp
+		// 	const name = new RegExp(student.firstElementChild.children[1].textContent.trim().toLowerCase());
+		// 	// Test the query against the name, return true if it's found
+		// 	return query.test(name) 
+		// });
+		
 	}
 
-	search.addEventListener('keyup', searchStudents);
+	// Add the event listeners
+	search.addEventListener('keyup', (e) => showPage(searchStudents(e), 1));
 	search.addEventListener('submit', searchStudents);
 }
 
@@ -101,8 +128,9 @@ function appendSearch(){
 appendPageLinks(students);
 
 // Append search
-appendSearch();
+appendSearch(students);
 
 // Show the first page of students
 showPage(students, 1);
+// Mark the first page as the 'active' page
 document.querySelector("a[data-page='1']").className = 'active';
