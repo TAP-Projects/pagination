@@ -1,10 +1,10 @@
 // Global variables
-// List of student items
+// DOM references
 const students = document.querySelectorAll('.student-item');
-// Number of students to be shown on each page
-const studentsPerPage = 10;
-// Page is used twice, so I'm moving it up here
 const thePage = document.querySelector('.page');
+const theHeader = document.querySelector('.page-header');
+// Constants
+const studentsPerPage = 10;
 
 // showPage takes a list of students and a page number and shows a list of no more than 10 students on a given page
 function showPage(list, page) {
@@ -43,11 +43,12 @@ function appendPageLinks(list) {
 	const fragment = new DocumentFragment();
 
 	// Create the needed number of page links and append them to a fragment
-	numPage = Math.ceil(list.length / studentsPerPage)
+	const numPage = Math.ceil(list.length / studentsPerPage)
 	for(let i=0; i<numPage; i++){
 		item = document.createElement('li');
 		link = document.createElement('a');
 		link.setAttribute('href', '#');
+		link.dataset.page = i + 1;
 		link.textContent = i + 1;
 		item.appendChild(link);
 		fragment.appendChild(item);
@@ -66,15 +67,45 @@ function appendPageLinks(list) {
 	// The only place I touch the DOM
 	thePage.appendChild(pagination);
 
-	pagination.addEventListener('click', (e) => showPage(students, parseInt(e.target.textContent)) );
+	pagination.addEventListener('click', (e) => {
+		pagination.querySelectorAll('a').forEach( link => link.className = '');
+		e.target.className = 'active';
+		showPage(students, parseInt(e.target.textContent))
+		
+	});
 	
+}
+
+function appendSearch(){
+	const search = document.createElement('form');
+	search.setAttribute('class', 'student-search');
+	const input = document.createElement('input');
+	input.placeholder = 'Search for students';
+	const button = document.createElement('button');
+	button.textContent = 'Search';
+	search.appendChild(input);
+	search.appendChild(button);
+	
+	theHeader.appendChild(search);
+
+	function searchStudents(e){
+		e.preventDefault();
+		console.log(input.value);
+	}
+
+	search.addEventListener('keyup', searchStudents);
+	search.addEventListener('submit', searchStudents);
 }
 
 // Append the page navigation
 appendPageLinks(students);
 
+// Append search
+appendSearch();
+
 // Show the first page of students
 showPage(students, 1);
+document.querySelector("a[data-page='1']").className = 'active';
 
 // This goes in the header, right after the h2
 // <!-- student search HTML to add dynamically -->
