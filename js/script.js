@@ -106,11 +106,3 @@ appendSearch();
 // Show the first page of students
 showPage(students, 1);
 document.querySelector("a[data-page='1']").className = 'active';
-
-// This goes in the header, right after the h2
-// <!-- student search HTML to add dynamically -->
-// <div class="student-search">
-// <input placeholder="Search for students...">
-// <button>Search</button>
-// </div>
-// <!-- end search -->
