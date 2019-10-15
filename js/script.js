@@ -40,7 +40,14 @@ function appendPageLinks(list) {
 	// If there are no students, then return
 	if(list.length <= 0) return;
 
-	const fragment = new DocumentFragment();
+	// Create the pagination div and set it's class to pagination
+	const pagination = document.createElement('div');
+	pagination.setAttribute('class', 'pagination');
+	// Create the list
+	list = document.createElement('ul');
+	// Append the list to the div
+	pagination.appendChild(list);
+
 
 	// Create the needed number of page links and append them to a fragment
 	const numPage = Math.ceil(list.length / studentsPerPage)
@@ -51,18 +58,8 @@ function appendPageLinks(list) {
 		link.dataset.page = i + 1;
 		link.textContent = i + 1;
 		item.appendChild(link);
-		fragment.appendChild(item);
+		list.appendChild(item);
 	}
-	
-	// Create the pagination div and set it's class to pagination
-	const pagination = document.createElement('div');
-	pagination.setAttribute('class', 'pagination');
-	// Create the list
-	list = document.createElement('ul');
-	// Append the list to the div
-	pagination.appendChild(list);
-	// Append the fragment to the list
-	list.appendChild(fragment);
 
 	// The only place I touch the DOM
 	thePage.appendChild(pagination);
@@ -109,13 +106,6 @@ function appendSearch(list){
 			} 
 		}
 		return results;
-
-		// return Array.from(students).filter( student => {
-		// 	// Store the student's name as a regexp
-		// 	const name = new RegExp(student.firstElementChild.children[1].textContent.trim().toLowerCase());
-		// 	// Test the query against the name, return true if it's found
-		// 	return query.test(name) 
-		// });
 		
 	}
 
