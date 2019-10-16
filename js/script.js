@@ -10,24 +10,17 @@ const studentsPerPage = 10;
 function showPage(list, page) {
 
 	// Show a message if there are no students in the list
-	if(list.length <= 0){
+	if(list && list.length <= 0){
 		const oops = document.createElement('p');
 		oops.textContent = "No results found.";
 		thePage.appendChild(oops);
 		return;
 	}
 
+	//! what if the search returns one item? Then the line below will through an error
+
 	// Hide all the students except for the ten you want displayed on a given page
 	list.forEach(item => item.style.display = 'none');
-
-	let searchResults = document.querySelectorAll('.searchResult');
-	console.log(searchResults);
-	if(searchResults.length > 0){
-		for(let i = 0; i < searchResults.length; i++){
-			searchResults[i].style.display = 'block';
-		}
-		return;
-	}
 	
 	// The start and end index of the list items to be shown on a given page
 	// On page 1, the startIndex will be 0, on page 2, 10, etc.
@@ -35,14 +28,36 @@ function showPage(list, page) {
 	// On page 1, the endIndex will be 10, on page 2, 20, etc.
 	const endIndex = (page * studentsPerPage);
 
-	// Display any list item with an index that is greater than or equal to the start index and less than the end index
-	for (let i = startIndex; i < endIndex; i++) {
-		// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
-		if (list[i]) {
-			list[i].style.display = 'block';
-		}
+	// Remove possibly incorrect pagination links
+	const paginationLinks = document.querySelector('.pagination');
+	if(paginationLinks) {
+		paginationLinks.remove();
 	}
-
+	
+	// Get any list items flagged as search results
+	const searchResults = document.querySelectorAll('.searchResult');
+	
+	if(searchResults.length > 0) {
+		// Display any item with an index that is greater than or equal to the start index and less than the end index
+		for(let i = startIndex; i < endIndex; i++){
+			// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
+			if(searchResults[i]){
+				searchResults[i].style.display = 'block';
+			}
+		}
+		// Add (or re-add) the new pagination links
+		appendPageLinks(searchResults);
+	} else {
+		// Display any item with an index that is greater than or equal to the start index and less than the end index
+		for (let i = startIndex; i < endIndex; i++) {
+			// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
+			if (list[i]) {
+				list[i].style.display = 'block';
+			}
+		}
+		// Add (or re-add) the new pagination links
+		appendPageLinks(students);
+	}
 }
 
 // appendPageLinks generates, appends, and adds functionality to the pagination buttons.
@@ -54,12 +69,12 @@ function appendPageLinks(list) {
 	const pagination = document.createElement('div');
 	pagination.setAttribute('class', 'pagination');
 	// Create the list
-	list = document.createElement('ul');
+	theList = document.createElement('ul');
 	// Append the list to the div
-	pagination.appendChild(list);
+	pagination.appendChild(theList);
 
 
-	// Create the needed number of page links and append them to a fragment
+	// Create the needed number of page links and append them to the list
 	const numPage = Math.ceil(list.length / studentsPerPage)
 	for(let i=0; i<numPage; i++){
 		item = document.createElement('li');
@@ -69,7 +84,7 @@ function appendPageLinks(list) {
 		link.dataset.page = i + 1;
 		link.textContent = i + 1;
 		item.appendChild(link);
-		list.appendChild(item);
+		theList.appendChild(item);
 	}
 
 	// The only place I touch the DOM
@@ -124,13 +139,11 @@ function appendSearch(list){
 	search.addEventListener('submit', searchStudents);
 }
 
-// Append the page navigation
-appendPageLinks(students);
-
 // Append search
 appendSearch(students);
 
 // Show the first page of students
 showPage(students, 1);
+
 // Mark the first page as the 'active' page
 document.querySelector("a[data-page='1']").className = 'active';
