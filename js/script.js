@@ -1,38 +1,35 @@
-// Global variables
-// DOM references
+
+// DOM references ===============================================================
 const students = document.querySelectorAll('.student-item');
 const thePage = document.querySelector('.page');
 const theHeader = document.querySelector('.page-header');
-// Constants
-const studentsPerPage = 10;
 
-// showPage takes a list of students and a page number and shows a list of no more than 10 students on a given page
+// Constants ====================================================================
+const perPage = 10;
+
+// FUNCTION showPage ============================================================
+// Takes a list of students and a page number and shows a list of no more than 10 
+// students on a given page
 function showPage(list, page) {
 
-	// Show a message if there are no students in the list
-	if(list && list.length <= 0){
-		const oops = document.createElement('p');
-		oops.textContent = "No results found.";
-		thePage.appendChild(oops);
-		return;
-	}
 
-	//! what if the search returns one item? Then the line below will through an error
+	//FIXME: not showing
+	// Show a warning if the list of students is empty
+	warnIfEmpty(list, theHeader);
 
-	// Hide all the students except for the ten you want displayed on a given page
-	list.forEach(item => item.style.display = 'none');
+	//FIXME: what if the search returns one item? Then the line below will throw an error
+
+	// Hide all the students
+	hideAll(list);
 	
 	// The start and end index of the list items to be shown on a given page
 	// On page 1, the startIndex will be 0, on page 2, 10, etc.
-	const startIndex = (page * studentsPerPage) - studentsPerPage;
+	const startIndex = (page * perPage) - perPage;
 	// On page 1, the endIndex will be 10, on page 2, 20, etc.
-	const endIndex = (page * studentsPerPage);
+	const endIndex = (page * perPage);
 
-	// Remove possibly incorrect pagination links
-	const paginationLinks = document.querySelector('.pagination');
-	if(paginationLinks) {
-		paginationLinks.remove();
-	}
+	// Remove the pagination and re-insert it later
+	removePagination()
 	
 	// Get any list items flagged as search results
 	const searchResults = document.querySelectorAll('.searchResult');
@@ -75,7 +72,7 @@ function appendPageLinks(list) {
 
 
 	// Create the needed number of page links and append them to the list
-	const numPage = Math.ceil(list.length / studentsPerPage)
+	const numPage = Math.ceil(list.length / perPage)
 	for(let i=0; i<numPage; i++){
 		item = document.createElement('li');
 		link = document.createElement('a');
