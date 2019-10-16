@@ -1,8 +1,12 @@
 
 // DOM references ===============================================================
-const students = document.querySelectorAll('.student-item');
-const thePage = document.querySelector('.page');
-const theHeader = document.querySelector('.page-header');
+// These are all live collections, as I'll be operating on HTMLCollections
+// div.page is the outermost container element in the body
+const divDotPage = document.getElementsByClassName('.page')[0];
+// div.header is the first child of div.page
+const divDotHeader = document.getElementsByClassName('.page-header')[0];
+// querySelectorAll returns a dead NodeList (not a live HTMLCollection)
+const students = document.getElementsByTagName('li');
 
 // Constants ====================================================================
 const perPage = 10;
@@ -12,17 +16,15 @@ const perPage = 10;
 // students on a given page
 function showPage(list, page) {
 
-
-	//FIXME: not showing
-	// Show a warning if the list of students is empty
-	warnIfEmpty(list, theHeader);
-
-	//FIXME: what if the search returns one item? Then the line below will throw an error
-
 	// Hide all the students
 	hideAll(list);
+	
+	//!FIXME: what if the search returns one item? Then the line below will throw an error
+	//!FIXME: The error warning does not display (and when it was, it was displaying incorrecty)
+	// Show a warning if the list of students is empty and exit showPage
+	warnIfEmpty(list, divDotHeader);
 
-	// Remove the pagination and re-insert it later
+	// Remove the pagination and re-insert it later (normal page results and search results require different pagination)
 	removePagination()
 	
 	// Get any list items flagged as search results
@@ -30,17 +32,12 @@ function showPage(list, page) {
 	
 	if(searchResults.length > 0) {
 		// Display the search results with pagination, showing the first page by default
-		displayItemsPaginated(searchResults, 1, perPage)
+		displayItemsPaginated(searchResults, page, perPage)
 		// Add pagination links
 		appendPageLinks(searchResults);
 	} else {
-		// Display any item with an index that is greater than or equal to the start index and less than the end index
-		for (let i = startIndex; i < endIndex; i++) {
-			// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
-			if (list[i]) {
-				list[i].style.display = 'block';
-			}
-		}
+		// Display the search results with pagination, showing the first page by default
+		displayItemsPaginated(students, page, perPage)
 		// Add (or re-add) the new pagination links
 		appendPageLinks(students);
 	}
@@ -74,7 +71,7 @@ function appendPageLinks(list) {
 	}
 
 	// The only place I touch the DOM
-	thePage.appendChild(pagination);
+	divDotPage.appendChild(pagination);
 
 	pagination.addEventListener('click', (e) => {
 		pagination.querySelectorAll('a').forEach( link => link.className = '');
@@ -96,7 +93,7 @@ function appendSearch(list){
 	button.textContent = 'Search';
 	search.appendChild(input);
 	search.appendChild(button);
-	theHeader.appendChild(search);
+	divDotHeader.appendChild(search);
 
 	// searchStudents searches through the list of students and returns an array of matches
 	function searchStudents(e){
