@@ -19,6 +19,15 @@ function showPage(list, page) {
 
 	// Hide all the students except for the ten you want displayed on a given page
 	list.forEach(item => item.style.display = 'none');
+
+	let searchResults = document.querySelectorAll('.searchResult');
+	console.log(searchResults);
+	if(searchResults.length > 0){
+		for(let i = 0; i < searchResults.length; i++){
+			searchResults[i].style.display = 'block';
+		}
+		return;
+	}
 	
 	// The start and end index of the list items to be shown on a given page
 	// On page 1, the startIndex will be 0, on page 2, 10, etc.
@@ -33,6 +42,7 @@ function showPage(list, page) {
 			list[i].style.display = 'block';
 		}
 	}
+
 }
 
 // appendPageLinks generates, appends, and adds functionality to the pagination buttons.
@@ -55,6 +65,7 @@ function appendPageLinks(list) {
 		item = document.createElement('li');
 		link = document.createElement('a');
 		link.setAttribute('href', '#');
+		// This will be used to mark the first page as 'active'
 		link.dataset.page = i + 1;
 		link.textContent = i + 1;
 		item.appendChild(link);
@@ -86,9 +97,6 @@ function appendSearch(list){
 	search.appendChild(button);
 	theHeader.appendChild(search);
 
-	// Store the results
-	const results = [];
-
 	// searchStudents searches through the list of students and returns an array of matches
 	function searchStudents(e){
 		// prevent page reload on submit
@@ -98,7 +106,7 @@ function appendSearch(list){
 		// Loop through the student collection and store the students who pass the test
 		for(let i = 0; i < students.length; i++){
 			// Remove any searchResults left by previous searches
-			students[i].classList.remove('searchResults');
+			students[i].classList.remove('searchResult');
 			// Store the student name as a regexp
 			const name = new RegExp(students[i].firstElementChild.children[1].textContent.trim().toLowerCase());
 			// Test the query against the name, return true if it's found
@@ -107,7 +115,7 @@ function appendSearch(list){
 				students[i].classList.add('searchResult');
 			} 
 		}
-		return results;
+		showPage(students, 1);
 		
 	}
 
