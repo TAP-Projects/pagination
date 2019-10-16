@@ -97,12 +97,14 @@ function appendSearch(list){
 		const query = new RegExp(e.target.value.trim().toLowerCase());
 		// Loop through the student collection and store the students who pass the test
 		for(let i = 0; i < students.length; i++){
+			// Remove any searchResults left by previous searches
+			students[i].classList.remove('searchResults');
 			// Store the student name as a regexp
 			const name = new RegExp(students[i].firstElementChild.children[1].textContent.trim().toLowerCase());
 			// Test the query against the name, return true if it's found
 			if(query.test(name)){	
-				// Store the student node
-				results.push(students[i]);
+				// Add a searchResult class
+				students[i].classList.add('searchResult');
 			} 
 		}
 		return results;
