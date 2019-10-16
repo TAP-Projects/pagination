@@ -21,12 +21,6 @@ function showPage(list, page) {
 
 	// Hide all the students
 	hideAll(list);
-	
-	// The start and end index of the list items to be shown on a given page
-	// On page 1, the startIndex will be 0, on page 2, 10, etc.
-	const startIndex = (page * perPage) - perPage;
-	// On page 1, the endIndex will be 10, on page 2, 20, etc.
-	const endIndex = (page * perPage);
 
 	// Remove the pagination and re-insert it later
 	removePagination()
@@ -35,14 +29,9 @@ function showPage(list, page) {
 	const searchResults = document.querySelectorAll('.searchResult');
 	
 	if(searchResults.length > 0) {
-		// Display any item with an index that is greater than or equal to the start index and less than the end index
-		for(let i = startIndex; i < endIndex; i++){
-			// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54!
-			if(searchResults[i]){
-				searchResults[i].style.display = 'block';
-			}
-		}
-		// Add (or re-add) the new pagination links
+		// Display the search results with pagination, showing the first page by default
+		displayItemsPaginated(searchResults, 1, perPage)
+		// Add pagination links
 		appendPageLinks(searchResults);
 	} else {
 		// Display any item with an index that is greater than or equal to the start index and less than the end index
