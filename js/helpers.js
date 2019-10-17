@@ -4,16 +4,16 @@
 // Takes a collection of element nodes and hides all of them using style.display
 function hideAll(collection){
     if(collection && collection.length){
-        collection.forEach(item => item.style.display = 'none');
+        for(let i = 0; i < collection.length; i++){
+            collection[i].classList.remove('show');
+        }
     }
 }
 
 // FUNCTION warnIfEmpty ===================================================
-// Takes a collection of element nodes. If the collection is empty, inserts a warning message
+// Takes a collection and a node. If the collection is empty, inserts a warning message 'afterend' of node
 function warnIfEmpty(collection, node){
-    // Being explicit here rather than relying on type conversion. If there's no nodelist or if the nodelist exists but is empty, then insert the warning
-    if(collection === null || NodeList.prototype.isPrototypeOf(collection) && collection.length === 0){
-        // Insert a warning
+    if(!collection){
         node.insertAdjacentHTML('afterend', `<p>No results found.</p>`);
         return;
     }
@@ -39,7 +39,7 @@ function displayItemsPaginated(collection, page, perPage){
     for(let i = startIndex; i < endIndex; i++){
 		// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54
 		if(collection[i]){
-			collection[i].style.display = 'block';
+			collection[i].classList.add = 'show';
 		}
     }
 }

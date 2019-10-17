@@ -1,12 +1,14 @@
 
 // DOM references ===============================================================
-// These are all live collections, as I'll be operating on HTMLCollections
-// div.page is the outermost container element in the body
-const divDotPage = document.getElementsByClassName('.page')[0];
-// div.header is the first child of div.page
-const divDotHeader = document.getElementsByClassName('.page-header')[0];
-// querySelectorAll returns a dead NodeList (not a live HTMLCollection)
-const students = document.getElementsByTagName('li');
+
+// page is the outermost container div in the body
+const page = document.querySelector('.page');
+// header div is the first child of the page div
+const header = document.querySelector('.page-header');
+// students is the collection of student list items
+const students = document.getElementsByClassName('student-item');
+// search results is the collection of student list items flagged as search results
+const searchResults = document.getElementsByClassName('.searchResult');
 
 // Constants ====================================================================
 const perPage = 10;
@@ -22,13 +24,10 @@ function showPage(list, page) {
 	//!FIXME: what if the search returns one item? Then the line below will throw an error
 	//!FIXME: The error warning does not display (and when it was, it was displaying incorrecty)
 	// Show a warning if the list of students is empty and exit showPage
-	warnIfEmpty(list, divDotHeader);
+	warnIfEmpty(list, header);
 
 	// Remove the pagination and re-insert it later (normal page results and search results require different pagination)
-	removePagination()
-	
-	// Get any list items flagged as search results
-	const searchResults = document.querySelectorAll('.searchResult');
+	removePagination();
 	
 	if(searchResults.length > 0) {
 		// Display the search results with pagination, showing the first page by default
@@ -45,37 +44,47 @@ function showPage(list, page) {
 
 // appendPageLinks generates, appends, and adds functionality to the pagination buttons.
 function appendPageLinks(list) {
-	// If there are no students, then return
-	if(list.length <= 0) return;
+	// If there are no students in the collection, then return
+	if(!list.length) return;
 
-	// Create the pagination div and set it's class to pagination
-	const pagination = document.createElement('div');
-	pagination.setAttribute('class', 'pagination');
-	// Create the list
-	theList = document.createElement('ul');
-	// Append the list to the div
-	pagination.appendChild(theList);
+	// Get the needed number of pages
+	const numPage = Math.ceil(list.length / perPage);
+	
+	// Create pagination list item html
+	function createPageLink(index){
+		return `
+			<li>
+				<a href="#" data-page=${index}>${index}</a>
+			</li>
+		`;
+	}
+	
+	// Create list string
+	let pageLinks = '';
 
-
-	// Create the needed number of page links and append them to the list
-	const numPage = Math.ceil(list.length / perPage)
-	for(let i=0; i<numPage; i++){
-		item = document.createElement('li');
-		link = document.createElement('a');
-		link.setAttribute('href', '#');
-		// This will be used to mark the first page as 'active'
-		link.dataset.page = i + 1;
-		link.textContent = i + 1;
-		item.appendChild(link);
-		theList.appendChild(item);
+	// Create a string containing the needed number of page links
+	for(let i=1; i<=numPage; i++){
+		pageLinks += createPageLink(i);
 	}
 
-	// The only place I touch the DOM
-	divDotPage.appendChild(pagination);
+	// Create the pagination html
+	const paginationHTML = `
+		<div class="pagination">
+			<ul>
+				${pageLinks}
+			</ul>
+		</div>	
+	`;
 
-	pagination.addEventListener('click', (e) => {
+	// The only place I touch the DOM
+	page.insertAdjacentHTML('beforeend', paginationHTML);
+
+	document.querySelector('.pagination').addEventListener('click', (e) => {
+		// Remove 'active' from the previously active page link
 		pagination.querySelectorAll('a').forEach( link => link.className = '');
-		e.target.className = 'active';
+		// Make the event target the active page link
+		e.target.classList.add = 'active';
+		// Call showPage with the correct page number
 		showPage(students, parseInt(e.target.textContent))
 		
 	});
@@ -93,7 +102,7 @@ function appendSearch(list){
 	button.textContent = 'Search';
 	search.appendChild(input);
 	search.appendChild(button);
-	divDotHeader.appendChild(search);
+	header.appendChild(search);
 
 	// searchStudents searches through the list of students and returns an array of matches
 	function searchStudents(e){
