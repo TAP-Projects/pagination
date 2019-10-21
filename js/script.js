@@ -1,4 +1,6 @@
 
+
+
 // DOM references ===============================================================
 
 // page is the outermost container div in the body
@@ -22,7 +24,7 @@ function showPage(list, page) {
 	hideAll(list);
 	
 	//!FIXME: what if the search returns one item? Then the line below will throw an error
-	//!FIXME: The error warning does not display (and when it was, it was displaying incorrecty)
+	//!FIXME: The error warning does not display (and when it was, it was displaying incorrectly)
 	// Show a warning if the list of students is empty and exit showPage
 	warnIfEmpty(list, header);
 
@@ -47,7 +49,7 @@ function appendPageLinks(list) {
 	// If there are no students in the collection, then return
 	if(!list.length) return;
 
-	// Get the needed number of pages
+	// Get the needed number of page links
 	const numPage = Math.ceil(list.length / perPage);
 	
 	// Create pagination list item html
