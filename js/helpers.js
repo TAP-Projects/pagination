@@ -13,6 +13,7 @@ function hideAll(collection){
 // FUNCTION warnIfEmpty ===================================================
 // Takes a collection and a node. If the collection is empty, inserts a warning message 'afterend' of node
 function warnIfEmpty(collection, node){
+    //NOTE: I'm not sure this works. I might need to check for existence and length separately
     if(!collection){
         node.insertAdjacentHTML('afterend', `<p>No results found.</p>`);
         return;
@@ -23,6 +24,7 @@ function warnIfEmpty(collection, node){
 // Remove possibly incorrect pagination links before displaying items
 function removePagination(){
     const pagination = document.querySelector('.pagination');
+    //NOTE: I'm not sure this works. I might need to check for existence and length separately
     if(pagination) {
         pagination.remove();
     }
@@ -42,4 +44,16 @@ function displayItemsPaginated(collection, page, perPage){
 			collection[i].classList.add = 'show';
 		}
     }
+}
+
+function createSearchForm(){
+    const search = document.createElement('form');
+	search.setAttribute('class', 'student-search');
+	const input = document.createElement('input');
+	input.placeholder = 'Search for students';
+	const button = document.createElement('button');
+	button.textContent = 'Search';
+	search.appendChild(input);
+    search.appendChild(button);
+    return search;
 }

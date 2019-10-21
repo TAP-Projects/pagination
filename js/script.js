@@ -7,9 +7,9 @@
 const page = document.querySelector('.page');
 // header div is the first child of the page div
 const header = document.querySelector('.page-header');
-// students is the collection of student list items
-const students = document.getElementsByClassName('student-item');
-// search results is the collection of student list items flagged as search results
+// students is the live collection of student list items
+const students = document.querySelectorAll('.student-item');
+// search results is the live collection of student list items flagged as search results
 const searchResults = document.getElementsByClassName('.searchResult');
 
 // Constants ====================================================================
@@ -81,7 +81,9 @@ function appendPageLinks(list) {
 	// The only place I touch the DOM
 	page.insertAdjacentHTML('beforeend', paginationHTML);
 
-	document.querySelector('.pagination').addEventListener('click', (e) => {
+	// Need a new reference to .pagination here
+	const pagination = document.querySelector('.pagination');
+	pagination.addEventListener('click', (e) => {
 		// Remove 'active' from the previously active page link
 		pagination.querySelectorAll('a').forEach( link => link.className = '');
 		// Make the event target the active page link
@@ -115,13 +117,21 @@ function appendSearch(list){
 		// Loop through the student collection and store the students who pass the test
 		for(let i = 0; i < students.length; i++){
 			// Remove any searchResults left by previous searches
-			students[i].classList.remove('searchResult');
+			if(students[i].classList.contains('searchResult')) {
+				students[i].classList.remove('searchResult');
+			}
 			// Store the student name as a regexp
 			const name = new RegExp(students[i].firstElementChild.children[1].textContent.trim().toLowerCase());
 			// Test the query against the name, return true if it's found
 			if(query.test(name)){	
-				// Add a searchResult class
-				students[i].classList.add('searchResult');
+				//NOTE: Let's try using querySelectorAll with students up above
+				console.log("The query and name are: ", query, name)
+				console.log("And students[i] is: ", students[i])
+				console.log("And students[i].classList is: ", students[i].classList)
+				if(students[i]){
+					// Add a searchResult class
+					students[i].classList.add('searchResult');
+				}
 			} 
 		}
 		showPage(students, 1);
