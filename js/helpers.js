@@ -1,11 +1,29 @@
 // HELPER FUNCTIONS
 
+// createElement takes an element type (as a string), optional text content (as a string), and optional attributes and their values (as an array of objects wherein each object is an attribute/value pair), creates the element, sets the text, sets the attributes, and returns the element
+function createElement(element, text, attributes) {
+	const theElem = document.createElement(element);
+	if (text && typeof text === 'string' && text.length > 0) {
+		theElem.textContent = text;
+	}
+	if (attributes && Array.isArray(attributes) && attributes.length > 0) {
+		attributes.forEach((attr) => {
+			theElem.setAttribute(attr.attribute, attr.value);
+		});
+	}
+	return theElem;
+}
+
 // FUNCTION hideAll =======================================================
 // Takes a collection of element nodes and hides all of them using style.display
 function hideAll(collection){
     if(collection && collection.length){
         for(let i = 0; i < collection.length; i++){
-            collection[i].classList.remove('show');
+            if(!collection[i].classList.contains('hide')){
+                let classes = `${collection[i].classList}`;
+                classes += ' hide';
+                collection[i].setAttribute('class', classes);
+            }
         }
     }
 }
@@ -39,11 +57,27 @@ function displayItemsPaginated(collection, page, perPage){
 	// On page 1, the endIndex will be 10, on page 2, 20, etc.
 	const endIndex = (page * perPage);   
     for(let i = startIndex; i < endIndex; i++){
-		// Don't attempt to set the style of items that don't exist, e.g. item 55 in a list of 54
+		// Show only the items on this page
 		if(collection[i]){
-			collection[i].classList.add = 'show';
+            if(collection[i].classList.contains('hide')){
+                collection[i].classList.remove('hide');
+            }
 		}
     }
+}
+
+function createPagination(list){
+    const ul = createElement('ul');
+	const numPage = Math.ceil(list.length / perPage);
+	for (let i = 1; i <= numPage; i++) {
+		const li = createElement('li');
+		const link = createElement('a', `${i}`, [{attribute: 'href', value: '#'},{attribute: 'data-page', value: i}]);
+		li.append(link);
+		ul.append(li);
+	}
+	const pagination = createElement('div', null, [{attribute: 'class', value: 'pagination'}])
+    pagination.append(ul);
+    return pagination;
 }
 
 function createSearchForm(){

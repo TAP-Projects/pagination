@@ -1,78 +1,58 @@
-const page = document.querySelector('.page');
-const header = document.querySelector('.page-header');
-//const students = document.querySelectorAll('.student-item');
-const searchResults = document.getElementsByClassName('.searchResult');
-const perPage = 10;
-
 function showPage(list, page) {
 	hideAll(list);
 	warnIfEmpty(list, header);
 	removePagination();
-	if (searchResults.length > 0) {
-		displayItemsPaginated(searchResults, page, perPage)
-		appendPageLinks(searchResults);
-	} else {
-		displayItemsPaginated(students, page, perPage)
-		appendPageLinks(students);
-	}
+	displayItemsPaginated(list, page, perPage)
+	setUpPagination(list);
 }
 
-function appendPageLinks(list) {
-	if (!list.length) return;
-	const numPage = Math.ceil(list.length / perPage);
-	function createPageLink(index) {
-		return `
-			<li>
-				<a href="#" data-page=${index}>${index}</a>
-			</li>
-		`;
+function setUpPagination(list) {
+	if (!list.length) {
+		throw new Error("No list or list empty");
+		return;
 	}
-	let pageLinks = '';
-	for (let i = 1; i <= numPage; i++) {
-		pageLinks += createPageLink(i);
-	}
-	const paginationHTML = `
-		<div class="pagination">
-			<ul>
-				${pageLinks}
-			</ul>
-		</div>	
-	`;
-	page.insertAdjacentHTML('beforeend', paginationHTML);
-	const pagination = document.querySelector('.pagination');
+	const pagination = createPagination(list);
+	
 	pagination.addEventListener('click', (e) => {
-		pagination.querySelectorAll('a').forEach(link => link.className = '');
-		e.target.classList.add = 'active';
-		showPage(students, parseInt(e.target.textContent))
-
+		[...e.target.parentNode.parentNode.children].forEach(link => link.className = '');
+		e.target.className = 'active';
+		showPage(list, parseInt(e.target.textContent))	
 	});
-
+	
+	page.append(pagination);
 }
 
-function searchStudents(e,students) {
-	e.preventDefault();
-	const students2 = [...e.target.parentNode.parentNode.nextElementSibling.children];
-	const query = new RegExp(e.target.value.trim().toLowerCase());
-	for (let i = 0; i < students2.length; i++) {
-		if (students2[i].classList.contains('searchResult')) {
-			students2[i].classList.remove('searchResult');
-		}
-		const name = new RegExp(students2[i].firstElementChild.children[1].textContent.trim().toLowerCase());
-		if (query.test(name)) {
-			console.log("The query and name are: ", query, name)
-			console.log("And students[i] is: ", students2[i])
-			console.log("And students[i].classList is: ", students2[i].classList)
+function setUpSearchForm() {
+	const search = createSearchForm();
+	header.append(search);
+	search.addEventListener('keyup', (e) => showPage(searchStudents(e, students)));
+	search.addEventListener('submit', (e) => showPage(searchStudents(e, students)));
+}
 
-			// Add a searchResult class
-			students2[i].classList.add('searchResult');
+function searchStudents(e, list) {
+	e.preventDefault();
+	const query = new RegExp(e.target.value.trim().toLowerCase());
+	for (let i = 0; i < list.length; i++) {
+		if (list[i].classList.contains('searchResult')) {
+			list[i].classList.remove('searchResult');
+		}
+		const name = new RegExp(list[i].firstElementChild.children[1].textContent.trim().toLowerCase());
+		if (query.test(name)) {
+			let classes = `${list[i].classList}`;
+			classes += ' searchResult'
+			list[i].setAttribute('class', classes);
 		}
 	}
-	showPage(students2, 1);
+	return document.querySelectorAll('.searchResult');
 }
 
-const search = createSearchForm();
-header.appendChild(search);
+const page = document.querySelector('.page');
+const header = document.querySelector('.page-header');
+const students = document.querySelectorAll('.student-item');
+//const searchResults = document.getElementsByClassName('.searchResult');
+const perPage = 10;
+
+setUpSearchForm();
+
 showPage(students, 1);
 document.querySelector("a[data-page='1']").className = 'active';
-search.addEventListener('keyup', (e) => showPage(searchStudents(e), 1));
-search.addEventListener('submit', searchStudents);
