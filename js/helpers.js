@@ -38,29 +38,6 @@ function hideAll(collection) {
     }
 }
 
-// FUNCTION cleanUpPreviousSearch =========================================
-// Clean up. If any items are already marked as search results or are missing their 'hide' class, then remove the searchResult class and add the hide class
-function cleanUpPreviousSearch(list) {
-    [...list].forEach(item => {
-        let classes = item.className;
-        if (classes.includes('searchResult')) {
-            classes.replace(/searchResult/, '');
-        }
-        item.className = classes;
-    });
-}
-
-// FUNCTION flagSearchResults ==============================================
-// Add the 'searchResult' class to each search result
-function flagSearchResults(list) {
-    list.forEach(result => {
-        let classes = result.className;
-        classes += ' searchResult'
-        result.className = classes;
-    });
-}
-
-
 // FUNCTION removePagination ==============================================
 // Remove possibly incorrect pagination links before displaying items
 function removePagination() {
@@ -73,7 +50,7 @@ function removePagination() {
 
 // FUNCTION displayItemsPaginated ==================================================
 // Display any item with an index that is greater than or equal to the start index and less than the end index
-function displayItemsPaginated(collection, page, perPage) {
+function displayItemsPaginated(list, page, perPage) {
     // The start and end index of the items to be shown on a given page
     // On page 1, the startIndex will be 0, on page 2, 10, etc.
     const startIndex = (page * perPage) - perPage;
@@ -81,9 +58,9 @@ function displayItemsPaginated(collection, page, perPage) {
     const endIndex = (page * perPage);
     for (let i = startIndex; i < endIndex; i++) {
         // Show only the items on this page
-        if (collection[i]) {
-            if (collection[i].classList.contains('hide')) {
-                collection[i].classList.remove('hide');
+        if (list[i]) {
+            if (list[i].classList.contains('hide')) {
+                list[i].classList.remove('hide');
             }
         }
     }
