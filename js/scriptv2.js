@@ -1,51 +1,51 @@
 function showPage(list, page) {
-	warnIfEmpty(list, header);
+	warnIfListEmpty(list, header);
 	hideAll(list);
+	//!BUG: When I remove the pagination,  lose the active link. I need to use the page number to set the active link
 	removePagination();
 	displayItemsPaginated(list, page, perPage)
-	setUpPagination(list);
+	setUpPagination(list, page);
 
 }
 
 function searchStudents(e, list) {
 	e.preventDefault();
-	const query = new RegExp(e.target.value.trim().toLowerCase());
+	const queryText = e.target.value.trim().toLowerCase();
+	const query = new RegExp(queryText);
 	const searchResults = [...list].filter( item => {
-		const name = new RegExp(item.firstElementChild.children[1].textContent.trim().toLowerCase());
+		const nameText = item.firstElementChild.children[1].textContent.trim().toLowerCase();
+		const name = new RegExp(nameText);
 		return query.test(name);
 	}); 
-	showPage(searchResults, 1)
 	return searchResults;	
 }
 
-function setUpPagination(list) {
-	if (!list.length) {
-		throw new Error("No list or list empty");
-		return;
-	}
-	const pagination = createPagination(list);
-	
+function setUpPagination(list, page) {
+	warnIfListEmpty(list);
+	const pagination = createPagination(list, page);
 	pagination.addEventListener('click', (e) => {
-		[...e.target.parentNode.parentNode.children].forEach(link => link.className = '');
-		e.target.className = 'active';
+		const pageLinks = e.target.parentNode.parentNode.children;
+		[...pageLinks].forEach(link => link.className = '');
 		showPage(list, parseInt(e.target.textContent))	
 	});
-	
-	page.append(pagination);
+	pageContainer.append(pagination);
 }
 
 function setUpSearchForm() {
 	const search = createSearchForm();
-	search.addEventListener('keyup', (e) => searchStudents(e, students));
-	search.addEventListener('submit', (e) => searchStudents(e, students));
+	search.addEventListener('keyup', (e) => {
+		hideAll(students);
+		showPage(searchStudents(e, students),1);
+	});
+	search.addEventListener('submit', (e) => showPage(searchStudents(e, students),1));
 	header.append(search);
 }
 
-const page = document.querySelector('.page');
+const pageContainer = document.querySelector('.page');
 const header = document.querySelector('.page-header');
 const students = document.querySelectorAll('.student-item');
 let perPage = 10;
 
 setUpSearchForm();
 showPage(students, 1);
-document.querySelector("a[data-page='1']").className = 'active';
+//document.querySelector("a[data-page='1']").className = 'active';

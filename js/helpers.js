@@ -15,17 +15,17 @@ function createElement(element, text, attributes) {
 }
 
 // FUNCTION warnIfEmpty ===================================================
-// Takes a collection and a node. If the collection is empty, inserts a warning message 'afterend' of node
-function warnIfEmpty(collection, node) {
+// Takes a list of nodes and a node. If the list is empty, inserts a warning message after the node.
+function warnIfListEmpty(collection, node) {
     //NOTE: I'm not sure this works. I might need to check for existence and length separately
-    if (!collection) {
-        node.insertAdjacentHTML('afterend', `<p>No results found.</p>`);
+    if (!collection || !collection.length) {
+        node.after(createElement('p', 'No results found.'));
         return;
     }
 }
 
 // FUNCTION hideAll =======================================================
-// Takes a collection of element nodes and hides all of them using style.display
+// Takes a list of nodes and hides them
 function hideAll(collection) {
     if (collection && collection.length) {
         for (let i = 0; i < collection.length; i++) {
@@ -48,7 +48,7 @@ function removePagination() {
     }
 }
 
-// FUNCTION displayItemsPaginated ==================================================
+// FUNCTION displayItemsPaginated =========================================
 // Display any item with an index that is greater than or equal to the start index and less than the end index
 function displayItemsPaginated(list, page, perPage) {
     // The start and end index of the items to be shown on a given page
@@ -66,12 +66,27 @@ function displayItemsPaginated(list, page, perPage) {
     }
 }
 
-function createPagination(list) {
+// FUNCTION createPagination ==============================================
+// Creates the pagination html and returns it
+function createPagination(list, page) {
     const ul = createElement('ul');
     const numPage = Math.ceil(list.length / perPage);
     for (let i = 1; i <= numPage; i++) {
         const li = createElement('li');
-        const link = createElement('a', `${i}`, [{ attribute: 'href', value: '#' }, { attribute: 'data-page', value: i }]);
+        const link = createElement('a', `${i}`, [
+            { 
+                attribute: 'class', 
+                value: page == i ? 'active' : '' 
+            },
+            { 
+                attribute: 'href', 
+                value: '#' 
+            }, 
+            { 
+                attribute: 'data-page', 
+                value: i 
+            }
+        ]);
         li.append(link);
         ul.append(li);
     }
@@ -80,6 +95,8 @@ function createPagination(list) {
     return pagination;
 }
 
+// FUNCTION createSearchForm ==============================================
+// Creates the search form html and returns it
 function createSearchForm() {
     const search = document.createElement('form');
     search.setAttribute('class', 'student-search');
