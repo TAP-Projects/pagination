@@ -1,7 +1,6 @@
 function showPage(list, page) {
 	warnIfListEmpty(list, header);
 	hideAll(list);
-	//!BUG: When I remove the pagination,  lose the active link. I need to use the page number to set the active link
 	removePagination();
 	displayItemsPaginated(list, page, perPage)
 	setUpPagination(list, page);
@@ -21,7 +20,7 @@ function searchStudents(e, list) {
 }
 
 function setUpPagination(list, page) {
-	warnIfListEmpty(list);
+	warnIfListEmpty(list, header);
 	const pagination = createPagination(list, page);
 	pagination.addEventListener('click', (e) => {
 		const pageLinks = e.target.parentNode.parentNode.children;
@@ -48,4 +47,3 @@ let perPage = 10;
 
 setUpSearchForm();
 showPage(students, 1);
-//document.querySelector("a[data-page='1']").className = 'active';

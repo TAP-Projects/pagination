@@ -17,9 +17,14 @@ function createElement(element, text, attributes) {
 // FUNCTION warnIfEmpty ===================================================
 // Takes a list of nodes and a node. If the list is empty, inserts a warning message after the node.
 function warnIfListEmpty(collection, node) {
-    //NOTE: I'm not sure this works. I might need to check for existence and length separately
+    //!Bug Remove the previous warning message, if any
+    const warning = document.querySelector('.warning');
+    if(warning){
+        warning.remove()
+    }
+    // If the list is not present or is emtpy, add a warning to the page
     if (!collection || !collection.length) {
-        node.after(createElement('p', 'No results found.'));
+        node.after(createElement('p', 'No results found.', [{attribute: 'class', value: 'warning'}]));
         return;
     }
 }
@@ -81,10 +86,6 @@ function createPagination(list, page) {
             { 
                 attribute: 'href', 
                 value: '#' 
-            }, 
-            { 
-                attribute: 'data-page', 
-                value: i 
             }
         ]);
         li.append(link);
