@@ -1,9 +1,10 @@
 function showPage(list, page) {
-	hideAll(list);
 	warnIfEmpty(list, header);
+	hideAll(list);
 	removePagination();
 	displayItemsPaginated(list, page, perPage)
 	setUpPagination(list);
+
 }
 
 function setUpPagination(list) {
@@ -24,35 +25,21 @@ function setUpPagination(list) {
 
 function setUpSearchForm() {
 	const search = createSearchForm();
+	search.addEventListener('keyup', (e) => searchStudents(e, students));
+	search.addEventListener('submit', (e) => searchStudents(e, students));
 	header.append(search);
-	search.addEventListener('keyup', (e) => showPage(searchStudents(e, students)));
-	search.addEventListener('submit', (e) => showPage(searchStudents(e, students)));
 }
 
 function searchStudents(e, list) {
 	e.preventDefault();
-	
-	[...list].forEach( item => {
-		let classes = item.className;
-		if(classes.includes('searchResult')) {
-			classes.replace(/searchResult/, '');
-		}
-		if(!classes.includes('hide')) {
-				classes += ' hide';
-		}
-		item.className = classes;
-	});
-
 	const query = new RegExp(e.target.value.trim().toLowerCase());
 	const searchResults = [...list].filter( item => {
 		const name = new RegExp(item.firstElementChild.children[1].textContent.trim().toLowerCase());
-		if (query.test(name)) {
-			let classes = item.className;
-			classes += ' searchResult'
-			item.className = classes;
-			return item
-		}
+		return query.test(name);
 	}); 
+	// cleanUpPreviousSearch(list);
+	// flagSearchResults(searchResults);
+	showPage(searchResults, 1)
 	return searchResults;	
 }
 

@@ -13,3 +13,9 @@ Please feel free to download or fork the project. This demonstration project was
 
 ## Issues
 Please report any issues here: https://github.com/julianjohannesen/pagination/issues
+
+everything works, except that the search results don't actually load. The pagination appears, and it's not until you click on the pagination button that you actually see the results. 
+
+so, i must be telling the search results to hide - probably at the same time that I'm assigning the searchResult class. 
+
+I need to something that will sort through search results and remove the "hide" class.
