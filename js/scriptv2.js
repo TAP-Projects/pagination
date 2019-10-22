@@ -31,19 +31,29 @@ function setUpSearchForm() {
 
 function searchStudents(e, list) {
 	e.preventDefault();
+	
+	[...list].forEach( item => {
+		let classes = item.className;
+		if(classes.includes('searchResult')) {
+			classes.replace(/searchResult/, '');
+		}
+		if(!classes.includes('hide')) {
+				classes += ' hide';
+		}
+		item.className = classes;
+	});
+
 	const query = new RegExp(e.target.value.trim().toLowerCase());
-	for (let i = 0; i < list.length; i++) {
-		if (list[i].classList.contains('searchResult')) {
-			list[i].classList.remove('searchResult');
-		}
-		const name = new RegExp(list[i].firstElementChild.children[1].textContent.trim().toLowerCase());
+	const searchResults = [...list].filter( item => {
+		const name = new RegExp(item.firstElementChild.children[1].textContent.trim().toLowerCase());
 		if (query.test(name)) {
-			let classes = `${list[i].classList}`;
+			let classes = item.className;
 			classes += ' searchResult'
-			list[i].setAttribute('class', classes);
+			item.className = classes;
+			return item
 		}
-	}
-	return document.querySelectorAll('.searchResult');
+	}); 
+	return searchResults;	
 }
 
 const page = document.querySelector('.page');
